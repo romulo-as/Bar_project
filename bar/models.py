@@ -14,6 +14,9 @@ class Coquetel(models.Model):
     )
     preco_custo = models.DecimalField(decimal_places=2, max_digits=4, default=0.0)
     preco_venda = models.DecimalField(decimal_places=2, max_digits=4, default=0.0)
+
+    class Meta:
+        verbose_name_plural = "Coqueteis"
     
 
     def __str__(self):
@@ -34,6 +37,9 @@ class Funcionario(models.Model):
     cpf = models.CharField(max_length=11, null=True, default=None, unique=True)
     email = models.EmailField(blank= True, null=True, default=None, unique=True)
 
+    class Meta:
+        verbose_name_plural = "Funcionários"
+
     def __str__(self):
         return self.nome
     
@@ -52,6 +58,9 @@ class Porcao(models.Model):
     )
     preco_custo = models.DecimalField(decimal_places=2, max_digits=4, default=0.0)
     preco_venda = models.DecimalField(decimal_places=2, max_digits=4, default=0.0)
+
+    class Meta:
+        verbose_name_plural = "Porções"
 
     def __str__(self):
         return self.nome
@@ -72,4 +81,5 @@ class Pedido(models.Model):
     porcoes = models.ForeignKey('Porcao', on_delete=models.PROTECT)
     atendente = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING)
 
-
+    class Meta:
+        verbose_name_plural = "Pedidos"
