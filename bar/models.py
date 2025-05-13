@@ -9,6 +9,7 @@ class Coquetel(models.Model):
             ('ld', 'Long Drink'), 
             ('otr', 'On The Rocks'), 
             ('tac', 'Taça'),
+            ('ilh', 'Ilhabela')
         ), 
         default=''
     )
@@ -22,15 +23,27 @@ class Coquetel(models.Model):
     def __str__(self):
         return self.nome
 
+class Pacote(models.Model):
+    nomePacote = models.CharField(max_length=100)
+    coquetel = models.ManyToManyField(Coquetel)
+    duracaoHora = models.IntegerField(max_length=1)
+    garcom = models.BooleanField()
+    valorPorPessoa = models.DecimalField(decimal_places=2, max_digits=4, default=0.0)
+
+    class Meta:
+        verbose_name_plural = "Pacotes"
+
+    def __str__(self):
+        return self.nomePacote
+
 class Funcionario(models.Model):
     nome = models.CharField(max_length=100)
-    salario = models.DecimalField(decimal_places=2, max_digits=6, default=0.0)
+    valorDiaria = models.DecimalField(decimal_places=2, max_digits=6, default=0.0)
     funcao = models.CharField(
         choices=(
             ('brt', 'bartender'), 
-            ('coz', 'cozinheiro'),
+            ('brb', 'barback'),
             ('gar', 'garçom'),
-            ('cai', 'caixa'),
             ('ger', 'gerente')
         ), default=''
     )
@@ -43,30 +56,29 @@ class Funcionario(models.Model):
     def __str__(self):
         return self.nome
     
-class Porcao(models.Model):
+class Cliente(models.Model):
     nome = models.CharField(max_length=100)
-    ingredientes = models.TextField(max_length=300, null=True)
-    adicional = models.CharField(
-        choices=(
-            ('', '---'),
-            ('Cal', 'Calabresa'), 
-            ('Mus', 'Mussarela'),
-            ('Bac', 'Bacon'),
-            ('Che', 'Cheddar'),
-            ('Cat', 'Catupiry')
-        ), default='', blank=True
-    )
-    preco_custo = models.DecimalField(decimal_places=2, max_digits=4, default=0.0)
-    preco_venda = models.DecimalField(decimal_places=2, max_digits=4, default=0.0)
+    cpf = models.CharField(max_length=11, null=True, default=None, unique=True)
+    email = models.EmailField(blank= True, null=True, default=None, unique=True)
+    endereco = models.CharField(max_length=200)
+    dataNasc = models.DateField()
 
     class Meta:
-        verbose_name_plural = "Porções"
+        verbose_name_plural = "Clientes"
+
+    def calcular_idade(self):
+        today = date.today()
+        idade = today.year - self.dataNasc.year
+        if today.month < self.dataNasc or (today.month == self.dataNasc and today.day < self.dataNasc.day):
+            idade -= 1
+        return idade
 
     def __str__(self):
         return self.nome
     
-class Pedido(models.Model):
-    cliente = models.CharField(max_length=100)
+class Evento(models.Model):
+    cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT)
+    datahora = models.DateTimeField()
     pago = models.BooleanField()
     forma_pagamento = models.CharField(
         choices=(
@@ -76,10 +88,7 @@ class Pedido(models.Model):
             ('Din', 'Dinheiro')
         )
     )
-    datahora = models.DateTimeField(auto_now_add=True)
     coqueteis = models.ForeignKey('Coquetel', on_delete=models.PROTECT)
-    porcoes = models.ForeignKey('Porcao', on_delete=models.PROTECT)
-    atendente = models.ForeignKey('Funcionario', on_delete=models.DO_NOTHING)
 
     class Meta:
-        verbose_name_plural = "Pedidos"
+        verbose_name_plural = "Eventos"
