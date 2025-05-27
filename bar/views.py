@@ -1,7 +1,16 @@
-# bar/views.py
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+
+# Importar o DRF
+from rest_framework import viewsets
+from .serializers import (
+    CoquetelSerializer, ClienteSerializer, ServicoSerializer, PacoteSerializer,
+    FuncionarioSerializer, ReservaSerializer, FornecedorSerializer,
+    ProdutoSerializer, EventoSerializer
+) # Importar os serializers que você criou
+
 from .models import Coquetel, Cliente, Servico, Pacote, Funcionario, Reserva, Fornecedor, Produto, Evento
 from .forms import CoquetelForm, ClienteForm 
 
@@ -92,3 +101,51 @@ def cliente_delete(request, pk):
         return redirect('cliente_list')
     context = {'cliente': cliente}
     return render(request, 'bar/cliente_confirm_delete.html', context)
+
+# VIEWS PARA API (Django REST Framework)
+
+# ViewSet para Coquetel
+# Permite operações CRUD completas (listar, criar, detalhar, atualizar, deletar)
+class CoquetelViewSet(viewsets.ModelViewSet):
+    queryset = Coquetel.objects.all()
+    serializer_class = CoquetelSerializer
+
+# ViewSet para Cliente
+class ClienteViewSet(viewsets.ModelViewSet):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+
+# ViewSet para Servico
+class ServicoViewSet(viewsets.ModelViewSet):
+    queryset = Servico.objects.all()
+    serializer_class = ServicoSerializer
+
+# ViewSet para Funcionario
+class FuncionarioViewSet(viewsets.ModelViewSet):
+    queryset = Funcionario.objects.all()
+    serializer_class = FuncionarioSerializer
+
+# ViewSet para Reserva
+class ReservaViewSet(viewsets.ModelViewSet):
+    queryset = Reserva.objects.all()
+    serializer_class = ReservaSerializer
+
+# ViewSet para Pacote
+class PacoteViewSet(viewsets.ModelViewSet):
+    queryset = Pacote.objects.all()
+    serializer_class = PacoteSerializer
+
+# ViewSet para Fornecedor
+class FornecedorViewSet(viewsets.ModelViewSet):
+    queryset = Fornecedor.objects.all()
+    serializer_class = FornecedorSerializer
+
+# ViewSet para Produto
+class ProdutoViewSet(viewsets.ModelViewSet):
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer
+
+# ViewSet para Evento
+class EventoViewSet(viewsets.ModelViewSet):
+    queryset = Evento.objects.all()
+    serializer_class = EventoSerializer
